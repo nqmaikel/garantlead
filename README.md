@@ -89,7 +89,7 @@ An unlocalized entry URL chooses a language in this order: an explicit language 
 Python combines the original page structure, translated content and reusable page components into the published site. BeautifulSoup transforms the homepage, while service and guide definitions generate the additional pages. Shared CSS and a small JavaScript layer provide the interface, form feedback and background-video behavior.
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph Build["Static publication build"]
         Layout["Original layout and media"] --> Builder["Python and BeautifulSoup"]
         Copy["Translated copy, services and guides"] --> Builder
