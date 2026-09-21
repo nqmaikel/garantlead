@@ -14,9 +14,9 @@ GarantLead presents website design, local SEO and GEO services for tradespeople 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
 
-![GarantLead English homepage](assets/showcase/screenshot-home-en.jpg)
+![GarantLead English homepage](assets/showcase/screenshot-home-2026-09-20.jpg)
 
-*Actual English homepage captured from the public website on 12 September 2026.*
+*Actual English homepage captured from the public website on 20 September 2026. It shows the current focused hero and free-review entry point.*
 
 </div>
 
@@ -30,7 +30,7 @@ The review described on the site covers trade-and-town searches, Google and Maps
 
 | Area | What a visitor can explore |
 |---|---|
-| **Homepage** | The service proposition, visibility-review scope, contact journey, delivery approach and advertised plans. |
+| **Homepage** | The service proposition, visibility-review scope, contact journey, delivery approach and plans with a currency selector and payment entry points. |
 | **Services** | Websites for tradespeople, local SEO, website audits and the free local visibility review. |
 | **Guides** | Practical articles about enquiry problems and the structure of a website in three languages. |
 | **FAQ and about** | Scope, working approach, commercial expectations and the relationship between GarantLead and its companion brand. |
@@ -38,6 +38,14 @@ The review described on the site covers trade-and-town searches, Google and Maps
 | **Privacy** | How language preferences and submitted enquiries are handled. |
 
 Each language has its own page URLs and translated navigation. Service and guide pages link to related content and return visitors to the enquiry form.
+
+![GarantLead current pricing section](assets/showcase/screenshot-pricing-2026-09-20.jpg)
+
+*Actual English pricing section captured from the public website on 20 September 2026. The image shows the EUR/CZK selector and advertised setup-plus-commission option; no payment was initiated.*
+
+![GarantLead one-time website option](assets/showcase/screenshot-checkout-options-2026-09-20.jpg)
+
+*Actual English pricing section captured from the public website on 20 September 2026. It shows the separate one-time website-creation option and the Stripe entry buttons; neither button was activated.*
 
 ![GarantLead English services](assets/showcase/screenshot-services-en.jpg)
 
@@ -77,6 +85,27 @@ flowchart TB
 ```
 
 The same endpoint supports JSON responses for the enhanced interface and a localized HTML response for a native form submission. Receipt and error pages are marked for exclusion from search indexing.
+
+## From a selected plan to hosted checkout
+
+The website now presents EUR and CZK options alongside its plans. The current implementation defaults Czech pages to CZK and English or Spanish pages to EUR, then remembers a visitor's currency choice separately for each language. The displayed amount and submitted currency change together.
+
+An explicit payment request sends the selected plan, language and currency to the Python service. The service selects its own configured plan amount, creates a one-time Stripe Checkout session and returns the hosted checkout address. The browser then opens Stripe's payment page. The setup option collects the initial website fee; the alternative collects the one-time website-creation price. Usage-based charges are separate from that initial checkout.
+
+```mermaid
+flowchart TB
+    Pricing["Published plans and EUR / CZK choice"] --> Selection["Plan, language and currency"]
+    Selection -->|"Explicit payment request"| Endpoint["Python checkout endpoint"]
+    Endpoint --> Check["Brand, origin and plan checks"]
+    Check --> Prices["Server-defined amount and currency"]
+    Prices -->|"Create a one-time session"| Stripe["Stripe Checkout API"]
+    Stripe --> URL["Hosted checkout URL"]
+    URL --> Browser["Browser opens Stripe checkout"]
+    Stripe -->|"Signed completion event"| Signature["Webhook signature verification"]
+    Signature -->|"Recognized brand"| Notice["Configured payment email notification"]
+```
+
+The payment webhook verifies the event signature before attempting a brand-specific email notification. This is a separate path from the durable enquiry records and their retry worker. The implementation also contains a PaymentIntent endpoint; the inspected public-page script uses the hosted Checkout route. Payment credentials, successful transactions and notification delivery were not tested for this showcase. The static return page alone is not evidence that a payment succeeded.
 
 ## Three languages without a client-side translation dependency
 
@@ -130,11 +159,12 @@ The project includes checks for durable receipts, duplicate requests, changed-pa
 | Language routing | Python entry routing and a cookie for explicit language choices. |
 | Enquiry service | Python HTTP receiver behind an Nginx boundary. |
 | Persistence | SQLite enquiry records, request deduplication and rate-limit events. |
-| Notifications | Optional SMTP delivery with a retry schedule. |
+| Notifications | Optional enquiry SMTP delivery with a retry schedule; payment notifications use a separate webhook path. |
+| Payments | Server-priced Stripe Checkout, EUR/CZK selection and signature-checked payment events. |
 | Discovery outputs | JSON-LD, canonical and alternate-language links, sitemap, RSS, Markdown and text indexes. |
 
 ## About this repository
 
 This repository showcases the current website, its actual interface and its implementation architecture. Source code, server configuration and customer enquiries remain private.
 
-**Last showcase review:** 2026-09-12 (Europe/Paris).
+**Last showcase review:** 2026-09-20 (Europe/Paris).
