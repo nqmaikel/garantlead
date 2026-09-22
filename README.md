@@ -124,6 +124,7 @@ flowchart TB
         Copy["Translated copy, services and guides"] --> Builder
         Builder --> Pages["Czech, Spanish and English HTML"]
         Builder --> Discovery["Canonical links, alternate languages and structured data"]
+        Identity["Verified language-specific LinkedIn company pages"] --> Builder
         Builder --> Indexes["Sitemap, Markdown pages, RSS and text indexes"]
     end
     Pages --> Web["Public website"]
@@ -142,7 +143,7 @@ The public pages can be served as static files. The enquiry receiver has a separ
 
 The build creates canonical URLs and reciprocal language alternatives, plus structured descriptions of the organization, website and individual pages. Service pages describe their service; guides carry article metadata; FAQ pages include their questions and answers; internal pages include breadcrumbs.
 
-The same page inventory feeds the sitemap, per-language guide feeds and Markdown/text indexes. These outputs make the published content available in several useful forms. They are not a guarantee of search ranking or AI recommendation.
+The same page inventory feeds the sitemap, per-language guide feeds and Markdown/text indexes. The current build also publishes verified English and Spanish LinkedIn company-page links in the footer, structured organization identity and public text directories. Czech pages currently use the verified primary company page while the dedicated Czech identity remains unavailable. These outputs make the published content available in several useful forms. They are not a guarantee of search ranking or AI recommendation.
 
 ## Data boundaries and implementation checks
 
@@ -167,4 +168,4 @@ The project includes checks for durable receipts, duplicate requests, changed-pa
 
 This repository showcases the current website, its actual interface and its implementation architecture. Source code, server configuration and customer enquiries remain private.
 
-**Last showcase review:** 2026-09-20 (Europe/Paris).
+**Last showcase review:** 2026-09-22 (Europe/Paris).
